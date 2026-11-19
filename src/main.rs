@@ -18,47 +18,39 @@ fn main() {
 
 
     for tick in 1..=9 {
+        println!("===============================");
 
-    println!("===============================");
+        println!("icon : {} score : {} lives : {}", pacman_icon, score, lives);
+        println!("position");
+        println!("pos_x : {} pos_y : {}",pos_x , pos_y);
+        println!("Power Mode : {}", is_power_mode);
 
-    
-    println!("icon : {} score : {} lives : {}", pacman_icon, score, lives);
-    println!("position");
-    println!("pos_x : {} pos_y : {}",pos_x , pos_y);
-    println!("Power Mode : {}", is_power_mode);
-
-        match input_key{
-        'w' => pos_y -= 1,
-        's' => pos_y += 1,
-        'a' => pos_x -= 1, 
-        'd' => pos_x += 1,
-        _ => println!("input not recognized")
+        movement(input_key, &mut pos_x, &mut pos_y);
+        score += 10;
+        check_power_pellet(pos_x, pos_y, &mut score, &mut is_power_mode);
     }
-
-    score += 10;
-    if pos_y == 1 && pos_x == 2{
-        is_power_mode = true;
-        score += 50;
-    }
-    
-
-    
-    }
-    // movement(input_key, pos_x, pos_y);
+   
     
 
     
 }
 
 
-// fn movement(input_key: char, mut x: usize, mut y: usize) {
-//     match input_key{
-//         'w' => y -= 1,
-//         's' => y += 1,
-//         'a' => x -= 1,
-//         'd' => x += 1,
-//         _ => println!("input not recognized")
-//     }
+fn movement(input_key: char, x: &mut usize, y: &mut usize) {
+    match input_key{
+        'w' => *y -= 1,
+        's' => *y += 1,
+        'a' => *x -= 1,
+        'd' => *x += 1,
+        _ => println!("input not recognized")
+    }
 
-//     return;
-// }
+    return;
+}
+
+fn check_power_pellet(x: usize, y: usize, score: &mut i32, is_power_mode: &mut bool) {
+    if y == 1 && x == 2{
+            *is_power_mode = true;
+            *score += 50;
+        }
+}
