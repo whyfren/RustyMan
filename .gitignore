@@ -6,3 +6,10 @@ TO-DO.md
 
 # IDE / Visual Studio cache
 .vs/
+
+
+# Added by cargo
+#
+# already existing elements were commented out
+
+#/target
