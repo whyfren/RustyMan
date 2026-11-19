@@ -1,0 +1,8 @@
+# Learning progress & notes (local only)
+TO-DO.md
+
+# Rust / Cargo build artifacts
+/target
+
+# IDE / Visual Studio cache
+.vs/
