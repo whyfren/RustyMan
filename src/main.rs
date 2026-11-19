@@ -1,13 +1,14 @@
 fn main() {
-    //variabel gabisa diganti
-    let pacman_icon: char = 'C';
 
-    //variabel game
-    let mut pos_x: usize = 1;
-    let mut pos_y: usize = 1;
-    let mut lives: u8 = 3;
-    let mut score: i32 = 0;
-    let mut is_power_mode: bool = false;
+    //player variable declaration
+    let mut pacman = Player{
+        icon: 'C',
+        pos_x: 1,
+        pos_y: 1,
+        lives: 3,
+        score: 0,
+        is_power_mode: false
+    };
 
     // input movement
     let mut input_key: char = 'd';
@@ -20,37 +21,44 @@ fn main() {
     for tick in 1..=9 {
         println!("===============================");
 
-        println!("icon : {} score : {} lives : {}", pacman_icon, score, lives);
+        println!("icon : {} score : {} lives : {}", pacman.icon, pacman.score, pacman.lives);
         println!("position");
-        println!("pos_x : {} pos_y : {}",pos_x , pos_y);
-        println!("Power Mode : {}", is_power_mode);
+        println!("pos_x : {} pos_y : {}", pacman.pos_x , pacman.pos_y);
+        println!("Power Mode : {}", pacman.is_power_mode);
 
-        movement(input_key, &mut pos_x, &mut pos_y);
-        score += 10;
-        check_power_pellet(pos_x, pos_y, &mut score, &mut is_power_mode);
+        
+        pacman.movement(input_key);
+        pacman.check_power_pellet();
     }
-   
-    
-
-    
 }
 
+struct Player{
+    icon: char,
+    pos_x: usize,
+    pos_y: usize,
+    lives: u8,
+    score: i32,
+    is_power_mode: bool
+}
 
-fn movement(input_key: char, x: &mut usize, y: &mut usize) {
+impl Player {
+    
+    fn movement(&mut self, input_key: char) {
     match input_key{
-        'w' => *y -= 1,
-        's' => *y += 1,
-        'a' => *x -= 1,
-        'd' => *x += 1,
+        'w' => self.pos_y -= 1,
+        's' => self.pos_y += 1,
+        'a' => self.pos_x -= 1,
+        'd' => self.pos_x += 1,
         _ => println!("input not recognized")
+        }
+    self.score += 10;
     }
 
-    return;
+    fn check_power_pellet(&mut self) {
+    if self.pos_y == 1 && self.pos_x == 2{
+            self.is_power_mode = true;
+            self.score += 50;
+        }
+    }
 }
 
-fn check_power_pellet(x: usize, y: usize, score: &mut i32, is_power_mode: &mut bool) {
-    if y == 1 && x == 2{
-            *is_power_mode = true;
-            *score += 50;
-        }
-}
