@@ -1,15 +1,16 @@
 use std::io::stdout;
 use std::time::Duration;
 use crossterm::{
-    cursor::{Hide, MoveTo, Show},
-    event::{self, Event, KeyCode, KeyEventKind},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, Clear, ClearType}
+    cursor::{Hide, MoveTo, Show}, 
+    event::{self, Event, KeyCode, KeyEventKind}, 
+    style::Stylize,
+    execute, 
+    terminal::{Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode}
 };
 
 fn main() {
     enable_raw_mode().unwrap();
-    execute!(stdout(), Clear(ClearType::All), Hide).unwrap();
+    execute!(stdout(), EnterAlternateScreen, Clear(ClearType::All), Hide).unwrap();
 
 
     //player variable declaration
@@ -75,9 +76,7 @@ fn main() {
     }
 
 
-    execute!(stdout(), Show).unwrap();
-    execute!(stdout(), Clear(ClearType::All), Hide).unwrap();
-    println!("");
+    execute!(stdout(), LeaveAlternateScreen, Clear(ClearType::All), Show).unwrap();
     disable_raw_mode().unwrap();
 }
 
@@ -127,11 +126,16 @@ fn render_map(current_map: &mut [[char; 5]; 5], player: &mut Player) {
         for x in 0..5{ 
     
             if player.pos_x == x && player.pos_y == y {
-                print!("{}", player.icon);
+                print!("{} ", player.icon.yellow().bold());
                 player.check_power_pellet(current_map, &x, &y);
                 current_map[y][x] = ' ';
             } else {
-                print!("{}", current_map[y][x]);
+                match current_map[y][x]{
+                    '#' => print!("{} ", current_map[y][x].blue().bold()),
+                    '.' => print!("{} ", current_map[y][x].white()),
+                    'o' => print!("{} ", current_map[y][x].magenta().bold()),
+                    _ => print!("  ")
+                }
             }
 
         }
