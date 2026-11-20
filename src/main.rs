@@ -10,15 +10,25 @@ fn main() {
         is_power_mode: false
     };
 
+    let map: [[char; 5]; 5] = [
+        ['#','#','#','#','#'],
+        ['#','.','.','.','#'],
+        ['#','.','#','.','#'],
+        ['#','o','.','.','#'],
+        ['#','#','#','#','#']
+    ];
+
     // input movement
     let mut input_key: char = 'd';
+
+    
 
     println!("RustyMan");
     println!("===============================");
     
 
 
-    for tick in 1..=9 {
+    for tick in 1..=3 {
         println!("===============================");
 
         println!("icon : {} score : {} lives : {}", pacman.icon, pacman.score, pacman.lives);
@@ -26,11 +36,15 @@ fn main() {
         println!("pos_x : {} pos_y : {}", pacman.pos_x , pacman.pos_y);
         println!("Power Mode : {}", pacman.is_power_mode);
 
+        render_map(&map, &mut pacman);
+
         
         pacman.movement(input_key);
         pacman.check_power_pellet();
     }
 }
+
+
 
 struct Player{
     icon: char,
@@ -42,7 +56,7 @@ struct Player{
 }
 
 impl Player {
-    
+
     fn movement(&mut self, input_key: char) {
     match input_key{
         'w' => self.pos_y -= 1,
@@ -51,7 +65,6 @@ impl Player {
         'd' => self.pos_x += 1,
         _ => println!("input not recognized")
         }
-    self.score += 10;
     }
 
     fn check_power_pellet(&mut self) {
@@ -62,3 +75,24 @@ impl Player {
     }
 }
 
+fn render_map(map: &[[char; 5]; 5], player: &mut Player) {
+    for y in 0..5 {
+
+        for x in 0..5{ 
+    
+            if player.pos_x == x && player.pos_y == y {
+                print!("{}", player.icon);
+                if map[x][y] == 'o'{
+                    player.is_power_mode = true;
+                    player.score += 50;
+                } if map[x][y] == '.'{
+                    player.score += 10;
+                }
+            } else {
+                print!("{}", map[x][y]);
+            }
+
+        }
+    println!("");
+    }
+}
