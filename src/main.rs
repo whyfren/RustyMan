@@ -12,9 +12,9 @@ fn main() {
 
     let map: [[char; 5]; 5] = [
         ['#','#','#','#','#'],
-        ['#','.','.','.','#'],
+        ['#','.','.','o','#'],
         ['#','.','#','.','#'],
-        ['#','o','.','.','#'],
+        ['#','.','.','.','#'],
         ['#','#','#','#','#']
     ];
     let mut current_map: [[char; 5]; 5];
@@ -27,14 +27,16 @@ fn main() {
     current_map = map;
 
     println!("RustyMan");
-    println!("===============================");
+    
     
 
 
-    for tick in 1..=3 {
-        
-        render_map(&map,&mut current_map, &mut pacman);
-        pacman.movement(input_key);
+    for tick in 1..=5 {
+        println!(" ");
+        println!("===============================");
+
+        render_map(&mut current_map, &mut pacman);
+        pacman.movement(input_key, &current_map);
 
         println!("===============================");
 
@@ -61,27 +63,33 @@ struct Player{
 
 impl Player {
 
-    fn movement(&mut self, input_key: char) {
+    fn movement(&mut self, input_key: char, map: &[[char; 5]; 5]) {
+        let mut next_x = self.pos_x;
+        let mut next_y = self.pos_y;
         match input_key{
-            'w' => self.pos_y -= 1,
-            's' => self.pos_y += 1,
-            'a' => self.pos_x -= 1,
-            'd' => self.pos_x += 1,
+            'w' => next_y -= 1,
+            's' => next_y += 1,
+            'a' => next_x -= 1,
+            'd' => next_x += 1,
             _ => println!("input not recognized")
             }
+        if map[next_y][next_x] != '#' {
+            self.pos_x = next_x;
+            self.pos_y = next_y;
+        }
     }
 
     fn check_power_pellet(&mut self, map: &[[char; 5]; 5], x: &usize, y: &usize) {
-        if map[*x][*y] == 'o'{
+        if map[*y][*x] == 'o'{
             self.is_power_mode = true;
             self.score += 50;
-        } if map[*x][*y] == '.'{
+        } if map[*y][*x] == '.'{
             self.score += 10;
         } 
     }
 }
 
-fn render_map(map: &[[char; 5]; 5], current_map: &mut [[char; 5]; 5], player: &mut Player) {
+fn render_map(current_map: &mut [[char; 5]; 5], player: &mut Player) {
     
     for y in 0..5 {
 
@@ -90,9 +98,9 @@ fn render_map(map: &[[char; 5]; 5], current_map: &mut [[char; 5]; 5], player: &m
             if player.pos_x == x && player.pos_y == y {
                 print!("{}", player.icon);
                 player.check_power_pellet(current_map, &x, &y);
-                current_map[x][y] = ' ';
+                current_map[y][x] = ' ';
             } else {
-                print!("{}", current_map[x][y]);
+                print!("{}", current_map[y][x]);
             }
 
         }
