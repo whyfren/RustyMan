@@ -1,4 +1,16 @@
+use std::io::stdout;
+use std::time::Duration;
+use crossterm::{
+    cursor::{Hide, MoveTo, Show},
+    event::{self, Event, KeyCode, KeyEventKind},
+    execute,
+    terminal::{disable_raw_mode, enable_raw_mode, Clear, ClearType}
+};
+
 fn main() {
+    enable_raw_mode().unwrap();
+    execute!(stdout(), Clear(ClearType::All), Hide).unwrap();
+
 
     //player variable declaration
     let mut pacman = Player{
@@ -28,15 +40,28 @@ fn main() {
 
     println!("RustyMan");
     
-    
+    loop {
+        execute!(stdout(), MoveTo(0, 0), Hide).unwrap();
 
-
-    for tick in 1..=5 {
-        println!(" ");
         println!("===============================");
 
         render_map(&mut current_map, &mut pacman);
-        pacman.movement(input_key, &current_map);
+
+        // its for handling input so fucking long
+        if event::poll(Duration::from_millis(200)).unwrap() {
+        if let Event::Key(key_event) = event::read().unwrap() {
+            if key_event.kind == KeyEventKind::Press {
+                match key_event.code {
+                    KeyCode::Char('q') => break,
+                    KeyCode::Char(c) => {
+                        input_key = c;
+                        pacman.movement(input_key, &current_map);
+                    }
+                    _ => {}
+                }
+            }
+        }
+}
 
         println!("===============================");
 
@@ -48,6 +73,12 @@ fn main() {
         
         // pacman.check_power_pellet();
     }
+
+
+    execute!(stdout(), Show).unwrap();
+    execute!(stdout(), Clear(ClearType::All), Hide).unwrap();
+    println!("");
+    disable_raw_mode().unwrap();
 }
 
 
