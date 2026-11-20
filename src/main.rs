@@ -76,7 +76,7 @@ fn main() {
     }
 
 
-    execute!(stdout(), LeaveAlternateScreen, Clear(ClearType::All), Show).unwrap();
+    execute!(stdout(), LeaveAlternateScreen, Show).unwrap();
     disable_raw_mode().unwrap();
 }
 
