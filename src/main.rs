@@ -8,6 +8,10 @@ use crossterm::{
     terminal::{Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode}
 };
 
+const MAP_HEIGHT: usize = 11;
+const MAP_WIDTH: usize = 15;
+type MapGrid = [[char; MAP_WIDTH]; MAP_HEIGHT];
+
 fn main() {
     enable_raw_mode().unwrap();
     execute!(stdout(), EnterAlternateScreen, Clear(ClearType::All), Hide).unwrap();
@@ -16,21 +20,27 @@ fn main() {
     //player variable declaration
     let mut pacman = Player{
         icon: 'C',
-        pos_x: 1,
-        pos_y: 1,
+        pos_x: 7,
+        pos_y: 7,
         lives: 3,
         score: 0,
         is_power_mode: false
     };
 
-    let map: [[char; 5]; 5] = [
-        ['#','#','#','#','#'],
-        ['#','.','.','o','#'],
-        ['#','.','#','.','#'],
-        ['#','.','.','.','#'],
-        ['#','#','#','#','#']
+    let map: MapGrid = [
+        ['#','#','#','#','#','#','#','#','#','#','#','#','#','#','#'],
+        ['#','o','.','.','.','.','.','#','.','.','.','.','.','o','#'],
+        ['#','.','#','#','.','#','.','#','.','#','.','#','#','.','#'],
+        ['#','.','.','.','.','#','.','.','.','#','.','.','.','.','#'],
+        ['#','.','#','#','.','#','#',' ','#','#','.','#','#','.','#'],
+        ['#','.','.','.','.','#',' ',' ',' ','#','.','.','.','.','#'],
+        ['#','.','#','#','.','#','#','#','#','#','.','#','#','.','#'],
+        ['#','.','.','.','.','.','.',' ','.','.','.','.','.','.','#'],
+        ['#','.','#','#','.','#','#','#','#','#','.','#','#','.','#'],
+        ['#','o','.','.','.','.','.','#','.','.','.','.','.','o','#'],
+        ['#','#','#','#','#','#','#','#','#','#','#','#','#','#','#'],
     ];
-    let mut current_map: [[char; 5]; 5];
+    let mut current_map: MapGrid;
 
 
     // input movement
@@ -71,7 +81,7 @@ fn main() {
         println!("pos_x : {} pos_y : {}", pacman.pos_x , pacman.pos_y);
         println!("Power Mode : {}", pacman.is_power_mode);
 
-        
+        if is_win(current_map) {break}
         // pacman.check_power_pellet();
     }
 
@@ -93,7 +103,7 @@ struct Player{
 
 impl Player {
 
-    fn movement(&mut self, input_key: char, map: &[[char; 5]; 5]) {
+    fn movement(&mut self, input_key: char, map: &MapGrid) {
         let mut next_x = self.pos_x;
         let mut next_y = self.pos_y;
         match input_key{
@@ -109,7 +119,7 @@ impl Player {
         }
     }
 
-    fn check_power_pellet(&mut self, map: &[[char; 5]; 5], x: &usize, y: &usize) {
+    fn check_power_pellet(&mut self, map: &MapGrid, x: &usize, y: &usize) {
         if map[*y][*x] == 'o'{
             self.is_power_mode = true;
             self.score += 50;
@@ -119,11 +129,11 @@ impl Player {
     }
 }
 
-fn render_map(current_map: &mut [[char; 5]; 5], player: &mut Player) {
+fn render_map(current_map: &mut MapGrid, player: &mut Player) {
     
-    for y in 0..5 {
+    for y in 0..MAP_HEIGHT {
 
-        for x in 0..5{ 
+        for x in 0..MAP_WIDTH{ 
     
             if player.pos_x == x && player.pos_y == y {
                 print!("{} ", player.icon.yellow().bold());
@@ -141,4 +151,16 @@ fn render_map(current_map: &mut [[char; 5]; 5], player: &mut Player) {
         }
     println!("");
     }
+}
+
+fn is_win(map: MapGrid) -> bool {
+    for y in 0..MAP_HEIGHT {
+            for x in 0..MAP_WIDTH {
+                if map[y][x] == '.' || map[y][x] == 'o' {
+                    return false;
+                } else {
+                }
+            }   
+    }
+    true
 }
