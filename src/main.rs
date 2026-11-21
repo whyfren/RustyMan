@@ -7,6 +7,7 @@ use crossterm::{
     execute, 
     terminal::{Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode}
 };
+use rand;
 
 const MAP_HEIGHT: usize = 11;
 const MAP_WIDTH: usize = 15;
@@ -26,6 +27,16 @@ fn main() {
         score: 0,
         is_power_mode: false
     };
+
+    let mut ghost: Ghost = Ghost{
+        icon: 'G',
+        pos_x: 7,
+        pos_y: 5,
+        live: true
+    };
+
+    
+
 
     let map: MapGrid = [
         ['#','#','#','#','#','#','#','#','#','#','#','#','#','#','#'],
@@ -56,7 +67,7 @@ fn main() {
 
         println!("===============================");
 
-        render_map(&mut current_map, &mut pacman);
+        render_map(&mut current_map, &mut pacman, &mut ghost);
 
         // its for handling input so fucking long
         if event::poll(Duration::from_millis(200)).unwrap() {
@@ -72,7 +83,11 @@ fn main() {
                 }
             }
         }
+
+        if ghost.live{ghost.movement(&map);} 
+
 }
+
 
         println!("===============================");
 
@@ -81,7 +96,7 @@ fn main() {
         println!("pos_x : {} pos_y : {}", pacman.pos_x , pacman.pos_y);
         println!("Power Mode : {}", pacman.is_power_mode);
 
-        if is_win(current_map) {break}
+        if is_win(&current_map) {break}
         // pacman.check_power_pellet();
     }
 
@@ -100,6 +115,15 @@ struct Player{
     score: i32,
     is_power_mode: bool
 }
+
+struct Ghost{
+    icon: char,
+    pos_x: usize,
+    pos_y: usize,
+    live: bool
+}
+
+
 
 impl Player {
 
@@ -129,16 +153,57 @@ impl Player {
     }
 }
 
-fn render_map(current_map: &mut MapGrid, player: &mut Player) {
+impl Ghost {
+    fn movement (&mut self, map: &MapGrid){
+
+        let dir = rand::random_range(0..4);
+
+        let mut next_x = self.pos_x;
+        let mut next_y = self.pos_y;
+
+        match dir{
+            0 => next_y -= 1,
+            1 => next_y += 1,
+            2 => next_x -= 1,
+            3 => next_x += 1,
+            _ => println!("input not recognized")
+        }
+
+        if map[next_y][next_x] != '#' {
+            self.pos_x = next_x;
+            self.pos_y = next_y;
+        }
+    }
+}
+
+fn render_map(current_map: &mut MapGrid, player: &mut Player, ghost: &mut Ghost) {
     
     for y in 0..MAP_HEIGHT {
 
         for x in 0..MAP_WIDTH{ 
     
             if player.pos_x == x && player.pos_y == y {
+
                 print!("{} ", player.icon.yellow().bold());
                 player.check_power_pellet(current_map, &x, &y);
                 current_map[y][x] = ' ';
+
+                if ghost.pos_x == player.pos_x && ghost.pos_y == player.pos_y{
+                    if player.is_power_mode {
+                        ghost.live = false;
+                    } else {
+                        player.lives -= 1;
+                    }
+                }
+
+            } else if ghost.pos_x == x && ghost.pos_y == y && ghost.live{
+            
+                if player.is_power_mode {
+                    print!("{} ", ghost.icon.cyan().bold());
+                } else {
+                    print!("{} ", ghost.icon.red().bold());
+                }
+
             } else {
                 match current_map[y][x]{
                     '#' => print!("{} ", current_map[y][x].blue().bold()),
@@ -153,7 +218,7 @@ fn render_map(current_map: &mut MapGrid, player: &mut Player) {
     }
 }
 
-fn is_win(map: MapGrid) -> bool {
+fn is_win(map: &MapGrid) -> bool {
     for y in 0..MAP_HEIGHT {
             for x in 0..MAP_WIDTH {
                 if map[y][x] == '.' || map[y][x] == 'o' {
