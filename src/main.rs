@@ -38,7 +38,8 @@ fn main() {
         pos_y: 7,
         lives: 3,
         score: 0,
-        is_power_mode: false
+        is_power_mode: false,
+        last_move: ' '
     };
 
     let mut ghost: Ghost = Ghost{
@@ -87,13 +88,12 @@ fn main() {
         if let Some(c) = read_input() {
             if c == 'q' {break;}
             match c {
-                'w' => last_move = 'w',
-                'a' => last_move = 'a',
-                's' => last_move = 's',
-                'd' => last_move = 'd',
-                _ => last_move,
+                'w' | 'a' | 's' | 'd' => last_move = c,
+                _ => {}
             }
+        }
 
+        if last_move != ' ' {
             pacman.movement(last_move, &current_map);
         }
 

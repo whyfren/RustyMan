@@ -7,7 +7,8 @@ pub struct Player{
     pub pos_y: usize,
     pub lives: u8,
     pub score: i32,
-    pub is_power_mode: bool
+    pub is_power_mode: bool,
+    pub last_move: char
 }
 
 
@@ -16,20 +17,40 @@ pub struct Player{
 impl Player {
 
     pub fn movement(&mut self, input_key: char, map: &MapGrid) {
-
         let mut next_x = self.pos_x;
         let mut next_y = self.pos_y;
-        match input_key{
-            'w' => next_y -= 1,
-            's' => next_y += 1,
-            'a' => next_x -= 1,
-            'd' => next_x += 1,
-            _ => println!("input not recognized")
+
+        
+            match input_key{
+                'w' => next_y -= 1,
+                's' => next_y += 1,
+                'a' => next_x -= 1,
+                'd' => next_x += 1,
+                _ => println!("input not recognized")
             }
-        if map[next_y][next_x] != '#' {
-            self.pos_x = next_x;
-            self.pos_y = next_y;
-        }
+            if map[next_y][next_x] != '#' {
+                self.pos_x = next_x;
+                self.pos_y = next_y;
+                self.last_move = input_key
+            } else {
+                next_x = self.pos_x;
+                next_y = self.pos_y;
+                match self.last_move{
+                    'w' => next_y -= 1,
+                    's' => next_y += 1,
+                    'a' => next_x -= 1,
+                    'd' => next_x += 1,
+                    _ => println!("input not recognized")
+                }  
+                if map[next_y][next_x] != '#' {
+                self.pos_x = next_x;
+                self.pos_y = next_y;
+            }
+            }
+        
+        
+        
+        
     }
 
     pub fn check_power_pellet(&mut self, map: &MapGrid) {
