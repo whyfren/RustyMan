@@ -88,26 +88,7 @@ fn main() {
 
         // render map
         render_map(&mut current_map, &mut pacman, &mut ghost);
-
-        // read user input
-        if let Some(c) = read_input() {
-            if c == 'q' {break;}
-            match c {
-                'w' | 'a' | 's' | 'd' => last_move = c,
-                _ => {}
-            }
-        }
-        
-        // player movement
-        if last_move != ' ' {
-            pacman.movement(last_move, &current_map);
-        }
-
-        // ghost collision check
-        pacman.check_ghost_collision(&mut ghost);
-        // ghost movement 
-        if ghost.live{ghost.movement(&map);} 
-        pacman.check_ghost_collision(&mut ghost);
+        // render map/
         
         // stats
         println!("===============================");
@@ -115,8 +96,7 @@ fn main() {
         println!("position");
         println!("pos_x : {} pos_y : {}", pacman.pos_x , pacman.pos_y);
         println!("Power Mode : {}", pacman.is_power_mode);
-
-
+        // stats/
 
         // this whole block in bottom is just for warning massage
         println!("===============================");
@@ -133,7 +113,7 @@ fn main() {
             println!("{}                         ", warning_massage.green().bold());
         }
         println!("===============================");
-
+        // warning massage/
 
         // win condition handling
         if is_win(&current_map) {
@@ -143,7 +123,32 @@ fn main() {
         if pacman.lives == 0 {
             break;
         }
+        // win handling/
+
+        // read user input
+        if let Some(c) = read_input() {
+            if c == 'q' {break;}
+            match c {
+                'w' | 'a' | 's' | 'd' => last_move = c,
+                _ => {}
+            }
+        }
+        // read user input/
         
+        // player movement
+        if last_move != ' ' {
+            pacman.movement(last_move, &current_map);
+        }
+        // player mobement/
+
+        // ghost collision check
+        pacman.check_ghost_collision(&mut ghost);
+        // ghost movement 
+        if ghost.live{ghost.movement(&map);} 
+        pacman.check_ghost_collision(&mut ghost);
+
+        
+
     }
 
     execute!(stdout(), Clear(ClearType::All)).unwrap();
