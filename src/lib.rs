@@ -252,20 +252,46 @@ impl WebGame {
                     out.push('\n');
                 }
                 out.push_str("===============================\n");
-                out.push_str("imagine this is some stats");
+                out.push_str(&format!("score : {} lives : {}", self.pacman.score, self.pacman.lives));
+                out.push_str("\n");
+                out.push_str(&format!("power mode : {}", self.pacman.is_power_mode));
+                out.push_str("\n");
                 out.push_str("===============================\n");
+
+                
+                let dist: usize = self.ghost.pos_x.abs_diff(self.pacman.pos_x) + self.ghost.pos_y.abs_diff(self.pacman.pos_y);
+                out.push_str("Ghost Detector: \n");
+                if dist <= 4 && self.ghost.live {
+                    out.push_str("<span class=\"ghost\">WARNING GHOST CLOSE DETECTED</span>")
+                } else if dist <= 6 && self.ghost.live {
+                    out.push_str("<span class=\"pacman\">WARNING GHOST GETTING CLOSE   </span>")
+                } else {
+                    out.push_str("<span class=\"safe\">OK                             </span>")
+                }
+                out.push_str("\n");
+                out.push_str("===============================\n");
+
 
 
 
             }
             GameState::GameOver => {
-                out.push_str("gameover press enter to Continue\n");
+                out.push_str("===============================\n");
+                out.push_str("            GAMEOVER           \n");
+                out.push_str("    Press Enter To Continue!   \n");
+                out.push_str("===============================\n");
             }
             GameState::LevelWin => {
-                out.push_str("press enter to Continue\n");
+                out.push_str("===============================\n");
+                out.push_str(&format!("           Level : {}          \n", self.current_level));
+                out.push_str("    Press Enter To Continue!   \n");
+                out.push_str("===============================\n");
             }
             GameState::TheEnd => {
-                out.push_str("you somehow beat the game. im proud of you son\n");
+                out.push_str("===============================\n");
+                out.push_str("   you somehow beat the game.  \n");
+                out.push_str("      im proud of you son      \n");
+                out.push_str("===============================\n");
             }
         }
 

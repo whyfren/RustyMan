@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">   
+    <title>RustyMan</title>
+</head>
+<body>
+    <pre id="screen"></pre>
+</body>
+<script type="module">
+  import init, { WebGame } from './pkg/RustyMan.js';
+
+  async function start() {
+    await init();
+    const game = new WebGame();
+    const screen = document.getElementById('screen');
+    screen.innerHTML = game.render_html();
+
+    window.addEventListener('keydown', (e) => {
+      game.handle_input(e.key);
+      screen.innerHTML = game.render_html();
+    });
+
+    setInterval(() => {
+      game.tick();
+      screen.innerHTML = game.render_html();
+    }, 200);
+  }
+  start();
+</script>
+</html>
