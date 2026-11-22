@@ -1,17 +1,16 @@
-use std::{io::stdout, os::windows};
+use std::io::stdout;
 use crossterm::{
-    cursor::{Hide, MoveTo, Show}, 
-    event::{self, Event, KeyCode, KeyEventKind}, 
+    cursor::{Hide, MoveTo}, 
     style::Stylize,
     execute, 
-    terminal::{Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode}
 };
 
-use crate::{player::{self, Player}, read_input};
+use crate::player::Player;
+use crate::read_input;
 
 pub fn main_menu() -> bool {
-    let mut s: &str = "Start"; 
-    let mut q: &str = "Exit";
+    let s: &str = "Start"; 
+    let q: &str = "Exit";
     loop{
         execute!(stdout(), MoveTo(0, 0), Hide).unwrap();
         

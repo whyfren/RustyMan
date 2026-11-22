@@ -28,6 +28,7 @@ use player::{
 };
 use ui::{
     main_menu,
+    winning,
     level_continue
 };
 
@@ -86,10 +87,6 @@ fn main() {
     let mut last_move: char= ' ';
 
     let mut warning_massage: &str;
-
-
-    // input movement
-    let mut input_key: char = 'd';
 
     println!("RustyMan");
 
@@ -176,10 +173,14 @@ fn main() {
         if game_stop {
             total_score += pacman.score;
             execute!(stdout(), Clear(ClearType::All)).unwrap();
-            if current_level < MAX_LEVEL {
-                if ui::winning(win, &pacman, total_score) {
+            
+            if current_level < MAX_LEVEL && win{
+                ui::end(&pacman, total_score);
+                break;
+            } else {
+                if winning(win, &pacman, total_score) {
                     execute!(stdout(), Clear(ClearType::All)).unwrap();
-                    if ui::level_continue(&mut current_level) {
+                    if level_continue(&mut current_level) {
                         game_stop = false; 
                         current_map = get_map(current_level);
                         win = false;
@@ -197,9 +198,6 @@ fn main() {
                         execute!(stdout(), Clear(ClearType::All)).unwrap();
                     } else {break;}
                 } else {break;}
-            } else {
-                ui::end(&pacman, total_score);
-                break;
             }
         }
         
