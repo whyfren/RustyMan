@@ -16,7 +16,11 @@ pub fn render_map(current_map: &mut MapGrid, player: &mut Player, ghost: &mut Gh
     for y in 0..MAP_HEIGHT {
 
         for x in 0..MAP_WIDTH{ 
-    
+            let dx = x.abs_diff(player.pos_x);
+            let dy = y.abs_diff(player.pos_y);
+
+            let in_light = dx * dx + dy * dy <= 10 || player.is_power_mode;
+
             if player.pos_x == x && player.pos_y == y {
 
                 print!("{} ", player.icon.yellow().bold());
@@ -24,7 +28,7 @@ pub fn render_map(current_map: &mut MapGrid, player: &mut Player, ghost: &mut Gh
                 current_map[y][x] = ' ';
 
 
-            } else if ghost.pos_x == x && ghost.pos_y == y && ghost.live{
+            } else if ghost.pos_x == x && ghost.pos_y == y && ghost.live && in_light{
             
                 if player.is_power_mode {
                     print!("{} ", ghost.icon.cyan().bold());
@@ -33,12 +37,19 @@ pub fn render_map(current_map: &mut MapGrid, player: &mut Player, ghost: &mut Gh
                 }
 
             } else {
-                match current_map[y][x]{
-                    '#' => print!("{} ", current_map[y][x].blue().bold()),
-                    '.' => print!("{} ", current_map[y][x].white()),
-                    'o' => print!("{} ", current_map[y][x].magenta().bold()),
-                    _ => print!("  ")
+                
+
+                if in_light{
+                    match current_map[y][x]{
+                        '#' => print!("{} ", current_map[y][x].blue().bold()),
+                        '.' => print!("{} ", current_map[y][x].white()),
+                        'o' => print!("{} ", current_map[y][x].magenta().bold()),
+                        _ => print!("  ")
+                    }
+                } else {
+                    print!("  ");
                 }
+
             }
 
         }

@@ -39,6 +39,7 @@ fn main() {
         lives: 3,
         score: 0,
         is_power_mode: false,
+        power_mode_duration: 0,
         last_move: ' '
     };
 
@@ -69,6 +70,8 @@ fn main() {
 
     let mut last_move: char= ' ';
 
+    let mut warning_massage: &str;
+
 
     // input movement
     let mut input_key: char = 'd';
@@ -92,6 +95,7 @@ fn main() {
                 _ => {}
             }
         }
+        execute!(stdout(), Clear(ClearType::All)).unwrap();
 
         if last_move != ' ' {
             pacman.movement(last_move, &current_map);
@@ -99,13 +103,32 @@ fn main() {
 
         pacman.check_ghost_collision(&mut ghost);
         if ghost.live{ghost.movement(&map);} 
+        
 
         println!("===============================");
 
-        println!("icon : {} score : {} lives : {}", pacman.icon, pacman.score, pacman.lives);
+        println!("player : {} score : {} lives : {}", pacman.icon, pacman.score, pacman.lives);
         println!("position");
         println!("pos_x : {} pos_y : {}", pacman.pos_x , pacman.pos_y);
         println!("Power Mode : {}", pacman.is_power_mode);
+
+        println!("===============================");
+
+        let dist: usize = ghost.pos_x.abs_diff(pacman.pos_x) + ghost.pos_y.abs_diff(pacman.pos_y);
+        
+        println!("Ghost Detector: ");
+        if dist <= 4 && ghost.live {
+            warning_massage = "WARNING GHOST CLOSE DETECTED";
+            println!("{}", warning_massage.red().bold());
+        } else if dist <= 6 && ghost.live {
+            warning_massage = "WARNING GHOST GETTING CLOSE";
+            println!("{}", warning_massage.yellow().bold());
+        } else {
+            warning_massage = "OK";
+            println!("{}", warning_massage.green().bold());
+        }
+        println!("===============================");
+
 
         if is_win(&current_map) {
             win = true;
@@ -115,6 +138,7 @@ fn main() {
             break;
         }
         // pacman.check_power_pellet();
+        
     }
 
     execute!(stdout(), Clear(ClearType::All)).unwrap();
@@ -132,6 +156,8 @@ fn main() {
             win_massage = "YOU lOSE";
             println!("{}", win_massage.red())
         }
+
+        println!("YOUR SCORE: {}", pacman.score);
         
 
         println!(" ");
@@ -149,6 +175,8 @@ fn main() {
 
 
 
+
+    
 
 
 

@@ -8,6 +8,7 @@ pub struct Player{
     pub lives: u8,
     pub score: i32,
     pub is_power_mode: bool,
+    pub power_mode_duration: usize,
     pub last_move: char
 }
 
@@ -19,7 +20,14 @@ impl Player {
     pub fn movement(&mut self, input_key: char, map: &MapGrid) {
         let mut next_x = self.pos_x;
         let mut next_y = self.pos_y;
-
+        if self.is_power_mode {
+            if self.power_mode_duration == 0 {
+                self.is_power_mode = false;
+            } else {
+                self.power_mode_duration -= 1;
+            }
+            
+        }
         
             match input_key{
                 'w' => next_y -= 1,
@@ -56,10 +64,11 @@ impl Player {
     pub fn check_power_pellet(&mut self, map: &MapGrid) {
         if map[self.pos_y][self.pos_x] == 'o'{
             self.is_power_mode = true;
+            self.power_mode_duration = 30;
             self.score += 50;
         } if map[self.pos_y][self.pos_x] == '.'{
             self.score += 10;
-        } 
+        }
     }
 
     pub fn check_ghost_collision(&mut self, ghost: &mut Ghost){
