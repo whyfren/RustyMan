@@ -1,3 +1,4 @@
+// libraries
 use std::io::stdout;
 use std::time::Duration;
 use crossterm::{
@@ -7,7 +8,11 @@ use crossterm::{
     execute, 
     terminal::{Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode}
 };
-use rand;
+
+// from other file
+mod ghosts;
+
+use ghosts::Ghost;
 
 const MAP_HEIGHT: usize = 11;
 const MAP_WIDTH: usize = 15;
@@ -133,12 +138,6 @@ struct Player{
     is_power_mode: bool
 }
 
-struct Ghost{
-    icon: char,
-    pos_x: usize,
-    pos_y: usize,
-    live: bool
-}
 
 
 
@@ -184,28 +183,7 @@ impl Player {
     }
 }
 
-impl Ghost {
-    fn movement (&mut self, map: &MapGrid){
 
-        let dir = rand::random_range(0..4);
-
-        let mut next_x = self.pos_x;
-        let mut next_y = self.pos_y;
-
-        match dir{
-            0 => next_y -= 1,
-            1 => next_y += 1,
-            2 => next_x -= 1,
-            3 => next_x += 1,
-            _ => println!("input not recognized")
-        }
-
-        if map[next_y][next_x] != '#' {
-            self.pos_x = next_x;
-            self.pos_y = next_y;
-        }
-    }
-}
 
 fn render_map(current_map: &mut MapGrid, player: &mut Player, ghost: &mut Ghost) {
     
