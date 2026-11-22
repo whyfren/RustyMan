@@ -17,13 +17,12 @@ fn main() {
     enable_raw_mode().unwrap();
     execute!(stdout(), EnterAlternateScreen, Clear(ClearType::All), Hide).unwrap();
 
-
     //player variable declaration
     let mut pacman = Player{
         icon: 'C',
         pos_x: 7,
         pos_y: 7,
-        lives: 3,
+        lives: 0,
         score: 0,
         is_power_mode: false
     };
@@ -36,7 +35,7 @@ fn main() {
     };
 
     
-
+    let mut win: bool = false;
 
     let map: MapGrid = [
         ['#','#','#','#','#','#','#','#','#','#','#','#','#','#','#'],
@@ -69,25 +68,13 @@ fn main() {
 
         render_map(&mut current_map, &mut pacman, &mut ghost);
 
-        // its for handling input so fucking long
-        if event::poll(Duration::from_millis(200)).unwrap() {
-        if let Event::Key(key_event) = event::read().unwrap() {
-            if key_event.kind == KeyEventKind::Press {
-                match key_event.code {
-                    KeyCode::Char('q') => break,
-                    KeyCode::Char(c) => {
-                        input_key = c;
-                        pacman.movement(input_key, &current_map);
-                    }
-                    _ => {}
-                }
-            }
+        if let Some(c) = read_input() {
+            if c == 'q' {break;}
+            pacman.movement(c, &current_map);
         }
 
+        pacman.check_ghost_collision(&mut ghost);
         if ghost.live{ghost.movement(&map);} 
-
-}
-
 
         println!("===============================");
 
@@ -96,11 +83,41 @@ fn main() {
         println!("pos_x : {} pos_y : {}", pacman.pos_x , pacman.pos_y);
         println!("Power Mode : {}", pacman.is_power_mode);
 
-        if is_win(&current_map) {break}
+        if is_win(&current_map) {
+            win = true;
+            break
+        }
+        if pacman.lives == 0 {
+            break;
+        }
         // pacman.check_power_pellet();
     }
 
+    execute!(stdout(), Clear(ClearType::All)).unwrap();
 
+    loop {
+        execute!(stdout(), MoveTo(0, 0), Hide).unwrap();
+        println!("===============================");
+
+        let win_massage: &str;
+
+        if win {
+            win_massage = "YOU WIN";
+            println!("{}", win_massage.yellow())
+        } else {
+            win_massage = "YOU lOSE";
+            println!("{}", win_massage.red())
+        }
+        
+
+        println!(" ");
+        println!("PRESS q TO EXIT");
+
+        if let Some(c) = read_input() {
+            if c == 'q' {break;}
+        }
+        println!("===============================");
+    }
     execute!(stdout(), LeaveAlternateScreen, Show).unwrap();
     disable_raw_mode().unwrap();
 }
@@ -143,13 +160,27 @@ impl Player {
         }
     }
 
-    fn check_power_pellet(&mut self, map: &MapGrid, x: &usize, y: &usize) {
-        if map[*y][*x] == 'o'{
+    fn check_power_pellet(&mut self, map: &MapGrid) {
+        if map[self.pos_y][self.pos_x] == 'o'{
             self.is_power_mode = true;
             self.score += 50;
-        } if map[*y][*x] == '.'{
+        } if map[self.pos_y][self.pos_x] == '.'{
             self.score += 10;
         } 
+    }
+
+    fn check_ghost_collision(&mut self, ghost: &mut Ghost){
+        if ghost.live && ghost.pos_x == self.pos_x && ghost.pos_y == self.pos_y{
+            if self.is_power_mode {
+                        ghost.live = false;
+                        self.score += 200;
+                    } else {
+                        self.lives -= 1;
+                        self.pos_x = 7;
+                        self.pos_y = 7;
+                    }
+
+        }
     }
 }
 
@@ -185,16 +216,9 @@ fn render_map(current_map: &mut MapGrid, player: &mut Player, ghost: &mut Ghost)
             if player.pos_x == x && player.pos_y == y {
 
                 print!("{} ", player.icon.yellow().bold());
-                player.check_power_pellet(current_map, &x, &y);
+                player.check_power_pellet(current_map);
                 current_map[y][x] = ' ';
 
-                if ghost.pos_x == player.pos_x && ghost.pos_y == player.pos_y{
-                    if player.is_power_mode {
-                        ghost.live = false;
-                    } else {
-                        player.lives -= 1;
-                    }
-                }
 
             } else if ghost.pos_x == x && ghost.pos_y == y && ghost.live{
             
@@ -216,6 +240,20 @@ fn render_map(current_map: &mut MapGrid, player: &mut Player, ghost: &mut Ghost)
         }
     println!("");
     }
+}
+
+fn read_input() -> Option<char> {
+    // its for handling input so fucking long
+        if event::poll(Duration::from_millis(200)).unwrap() {
+            if let Event::Key(key_event) = event::read().unwrap() {
+                if key_event.kind == KeyEventKind::Press {
+                    if let KeyCode::Char(c) = key_event.code {
+                        return Some(c);
+                    }
+                }
+            }
+        }
+        None
 }
 
 fn is_win(map: &MapGrid) -> bool {
