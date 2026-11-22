@@ -86,8 +86,10 @@ fn main() {
 
         println!("===============================");
 
+        // render map
         render_map(&mut current_map, &mut pacman, &mut ghost);
 
+        // read user input
         if let Some(c) = read_input() {
             if c == 'q' {break;}
             match c {
@@ -95,41 +97,45 @@ fn main() {
                 _ => {}
             }
         }
-        execute!(stdout(), Clear(ClearType::All)).unwrap();
-
+        
+        // player movement
         if last_move != ' ' {
             pacman.movement(last_move, &current_map);
         }
 
+        // ghost collision check
         pacman.check_ghost_collision(&mut ghost);
+        // ghost movement 
         if ghost.live{ghost.movement(&map);} 
+        pacman.check_ghost_collision(&mut ghost);
         
-
+        // stats
         println!("===============================");
-
         println!("player : {} score : {} lives : {}", pacman.icon, pacman.score, pacman.lives);
         println!("position");
         println!("pos_x : {} pos_y : {}", pacman.pos_x , pacman.pos_y);
         println!("Power Mode : {}", pacman.is_power_mode);
 
-        println!("===============================");
 
+
+        // this whole block in bottom is just for warning massage
+        println!("===============================");
         let dist: usize = ghost.pos_x.abs_diff(pacman.pos_x) + ghost.pos_y.abs_diff(pacman.pos_y);
-        
         println!("Ghost Detector: ");
         if dist <= 4 && ghost.live {
             warning_massage = "WARNING GHOST CLOSE DETECTED";
             println!("{}", warning_massage.red().bold());
         } else if dist <= 6 && ghost.live {
             warning_massage = "WARNING GHOST GETTING CLOSE";
-            println!("{}", warning_massage.yellow().bold());
+            println!("{}    ", warning_massage.yellow().bold());
         } else {
             warning_massage = "OK";
-            println!("{}", warning_massage.green().bold());
+            println!("{}                         ", warning_massage.green().bold());
         }
         println!("===============================");
 
 
+        // win condition handling
         if is_win(&current_map) {
             win = true;
             break
@@ -137,7 +143,6 @@ fn main() {
         if pacman.lives == 0 {
             break;
         }
-        // pacman.check_power_pellet();
         
     }
 
