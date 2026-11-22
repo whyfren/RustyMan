@@ -22,7 +22,7 @@ fn main() {
         icon: 'C',
         pos_x: 7,
         pos_y: 7,
-        lives: 0,
+        lives: 3,
         score: 0,
         is_power_mode: false
     };
