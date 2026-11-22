@@ -202,14 +202,14 @@ impl WebGame {
         match self.state {
             GameState::MainMenu => {
                 out.push_str("===============================\n");
-                out.push_str("           RUSTYMAN            \n");
-                out.push_str("   Press Enter To Start!       \n");
+                out.push_str("            RUSTYMAN           \n");
+                out.push_str("      Press Enter To Start!    \n");
                 out.push_str("===============================\n");
             }
             GameState::Playing => {
-                out.push_str("===============================\n");
+                out.push_str("=============================\n");
                 out.push_str(&format!("Level : {}\n", self.current_level));
-                out.push_str("===============================\n");
+                out.push_str("=============================\n");
                 for y in 0..MAP_HEIGHT {
                     for x in 0..MAP_WIDTH {
                         let dx = x.abs_diff(self.pacman.pos_x);
@@ -246,17 +246,16 @@ impl WebGame {
                             }
 
                         }
-
-
                     }
                     out.push('\n');
+                    
                 }
-                out.push_str("===============================\n");
+                out.push_str("=============================\n");
                 out.push_str(&format!("score : {} lives : {}", self.pacman.score, self.pacman.lives));
                 out.push_str("\n");
                 out.push_str(&format!("power mode : {}", self.pacman.is_power_mode));
                 out.push_str("\n");
-                out.push_str("===============================\n");
+                out.push_str("=============================\n");
 
                 
                 let dist: usize = self.ghost.pos_x.abs_diff(self.pacman.pos_x) + self.ghost.pos_y.abs_diff(self.pacman.pos_y);
@@ -264,12 +263,12 @@ impl WebGame {
                 if dist <= 4 && self.ghost.live {
                     out.push_str("<span class=\"ghost\">WARNING GHOST CLOSE DETECTED</span>")
                 } else if dist <= 6 && self.ghost.live {
-                    out.push_str("<span class=\"pacman\">WARNING GHOST GETTING CLOSE   </span>")
+                    out.push_str("<span class=\"pacman\">WARNING GHOST GETTING CLOSE </span>")
                 } else {
-                    out.push_str("<span class=\"safe\">OK                             </span>")
+                    out.push_str("<span class=\"safe\">OK                           </span>")
                 }
                 out.push_str("\n");
-                out.push_str("===============================\n");
+                out.push_str("=============================\n");
 
 
 
@@ -283,7 +282,7 @@ impl WebGame {
             }
             GameState::LevelWin => {
                 out.push_str("===============================\n");
-                out.push_str(&format!("           Level : {}          \n", self.current_level));
+                out.push_str(&format!("       Level {} Completed          \n", self.current_level));
                 out.push_str("    Press Enter To Continue!   \n");
                 out.push_str("===============================\n");
             }
