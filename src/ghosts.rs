@@ -1,4 +1,8 @@
+//libraries
 use rand;
+
+// fromm other file
+use crate::maps::MapGrid;
 
 pub struct Ghost{
     pub icon: char,
