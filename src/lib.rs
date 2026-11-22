@@ -200,7 +200,12 @@ impl WebGame {
         let mut out = String::new();
         
         match self.state {
-            GameState::MainMenu => {}
+            GameState::MainMenu => {
+                out.push_str("===============================\n");
+                out.push_str("           RUSTYMAN            \n");
+                out.push_str("   Press Enter To Start!       \n");
+                out.push_str("===============================\n");
+            }
             GameState::Playing => {
                 out.push_str("===============================\n");
                 out.push_str(&format!("Level : {}\n", self.current_level));
@@ -231,9 +236,9 @@ impl WebGame {
                         } else {
                             if in_light{
                                 match self.current_map[y][x]{
-                                    '#' => out.push_str(&format!("<span class=\"wall\"># </span>",  self.current_map[y][x])),
-                                    '.' => out.push_str(&format!("<span class=\"dot\">. </span>",  self.current_map[y][x])),
-                                    'o' => out.push_str(&format!("<span class=\"pellet\">o </span>",  self.current_map[y][x])),
+                                    '#' => out.push_str("<span class=\"wall\"># </span>"),
+                                    '.' => out.push_str("<span class=\"dot\">. </span>"),
+                                    'o' => out.push_str("<span class=\"pellet\">o </span>"),
                                     _ => out.push_str("  ")
                                 }
                             } else {
@@ -246,18 +251,26 @@ impl WebGame {
                     }
                     out.push('\n');
                 }
+                out.push_str("===============================\n");
+                out.push_str("imagine this is some stats");
+                out.push_str("===============================\n");
 
-                
 
 
             }
-            GameState::GameOver => {}
-            GameState::LevelWin => {}
-            GameState::TheEnd => {}
+            GameState::GameOver => {
+                out.push_str("gameover press enter to Continue\n");
+            }
+            GameState::LevelWin => {
+                out.push_str("press enter to Continue\n");
+            }
+            GameState::TheEnd => {
+                out.push_str("you somehow beat the game. im proud of you son\n");
+            }
         }
 
 
-        
+        out 
     }
 
 
