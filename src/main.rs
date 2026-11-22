@@ -18,6 +18,7 @@ mod ui;
 use ghosts::Ghost;
 use maps::{
     MapGrid,
+    MAX_LEVEL,
     render_map,
     is_win,
     get_map
@@ -26,7 +27,8 @@ use player::{
     Player
 };
 use ui::{
-    main_menu
+    main_menu,
+    level_continue
 };
 
 
@@ -56,6 +58,7 @@ fn main() {
         live: true
     };
 
+    let mut total_score: i32 = 0;
 
     let mut current_level: u8 = 1;
     let mut current_map: MapGrid = get_map(current_level);
@@ -78,6 +81,7 @@ fn main() {
 
     
     let mut win: bool = false;
+    let mut game_stop: bool = false;
 
     let mut last_move: char= ' ';
 
@@ -99,7 +103,8 @@ fn main() {
     
     loop {
         execute!(stdout(), MoveTo(0, 0), Hide).unwrap();
-
+        println!("===============================");
+        println!("Level : {}",  current_level);
         println!("===============================");
 
         // render map
@@ -123,23 +128,15 @@ fn main() {
             println!("{}", warning_massage.red().bold());
         } else if dist <= 6 && ghost.live {
             warning_massage = "WARNING GHOST GETTING CLOSE";
-            println!("{}    ", warning_massage.yellow().bold());
+            println!("{}        ", warning_massage.yellow().bold());
         } else {
             warning_massage = "OK";
-            println!("{}                         ", warning_massage.green().bold());
+            println!("{}                                           ", warning_massage.green().bold());
         }
         println!("===============================");
         // warning massage/
 
-        // win condition handling
-        if is_win(&current_map) {
-            win = true;
-            break
-        }
-        if pacman.lives == 0 {
-            break;
-        }
-        // win handling/
+        
 
         // read user input
         if let Some(c) = read_input() {
@@ -163,37 +160,60 @@ fn main() {
         if ghost.live{ghost.movement(&current_map);} 
         pacman.check_ghost_collision(&mut ghost);
 
+
+        // win condition handling
+        if is_win(&current_map) {
+            win = true;
+            game_stop = true;
+        }
+        if pacman.lives == 0 {
+            win = false;
+            game_stop = true;
+        }
+        // win handling/
+
+
+        if game_stop {
+            total_score += pacman.score;
+            execute!(stdout(), Clear(ClearType::All)).unwrap();
+            if current_level < MAX_LEVEL {
+                if ui::winning(win, &pacman, total_score) {
+                    execute!(stdout(), Clear(ClearType::All)).unwrap();
+                    if ui::level_continue(&mut current_level) {
+                        game_stop = false; 
+                        current_map = get_map(current_level);
+                        win = false;
+                        last_move = ' ';
+                        pacman.pos_x = 7;
+                        pacman.pos_y = 7;
+                        pacman.last_move = ' ';
+                        pacman.lives = 3;
+                        pacman.power_mode_duration = 0;
+                        pacman.is_power_mode = false;
+                        ghost.pos_x = 7;
+                        ghost.pos_y = 5;
+                        ghost.live = true;
+                        pacman.score = 0;
+                        execute!(stdout(), Clear(ClearType::All)).unwrap();
+                    } else {break;}
+                } else {break;}
+            } else {
+                ui::end(&pacman, total_score);
+                break;
+            }
+        }
         
 
     }
 
     execute!(stdout(), Clear(ClearType::All)).unwrap();
 
-    loop {
-        execute!(stdout(), MoveTo(0, 0), Hide).unwrap();
-        println!("===============================");
+    
 
-        let win_massage: &str;
+    execute!(stdout(), Clear(ClearType::All)).unwrap();
 
-        if win {
-            win_massage = "YOU WIN";
-            println!("{}", win_massage.yellow())
-        } else {
-            win_massage = "YOU lOSE";
-            println!("{}", win_massage.red())
-        }
+    
 
-        println!("YOUR SCORE: {}", pacman.score);
-        
-
-        println!(" ");
-        println!("PRESS q TO EXIT");
-
-        if let Some(c) = read_input() {
-            if c == 'q' {break;}
-        }
-        println!("===============================");
-    }
     execute!(stdout(), LeaveAlternateScreen, Show).unwrap();
     disable_raw_mode().unwrap();
 }
