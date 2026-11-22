@@ -173,8 +173,8 @@ fn main() {
         if game_stop {
             total_score += pacman.score;
             execute!(stdout(), Clear(ClearType::All)).unwrap();
-
-            if current_level == MAX_LEVEL && win{
+            
+            if current_level < MAX_LEVEL && win{
                 ui::end(&pacman, total_score);
                 break;
             } else {
