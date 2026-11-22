@@ -13,15 +13,20 @@ use crossterm::{
 mod ghosts;
 mod maps;
 mod player;
+mod ui;
 
 use ghosts::Ghost;
 use maps::{
     MapGrid,
     render_map,
-    is_win
+    is_win,
+    get_map
 };
 use player::{
     Player
+};
+use ui::{
+    main_menu
 };
 
 
@@ -43,6 +48,7 @@ fn main() {
         last_move: ' '
     };
 
+    // ghost declaration
     let mut ghost: Ghost = Ghost{
         icon: 'G',
         pos_x: 7,
@@ -50,20 +56,25 @@ fn main() {
         live: true
     };
 
-    let map: MapGrid = [
-        ['#','#','#','#','#','#','#','#','#','#','#','#','#','#','#'],
-        ['#','o','.','.','.','.','.','#','.','.','.','.','.','o','#'],
-        ['#','.','#','#','.','#','.','#','.','#','.','#','#','.','#'],
-        ['#','.','.','.','.','#','.','.','.','#','.','.','.','.','#'],
-        ['#','.','#','#','.','#','#',' ','#','#','.','#','#','.','#'],
-        ['#','.','.','.','.','#',' ',' ',' ','#','.','.','.','.','#'],
-        ['#','.','#','#','.','#','#','#','#','#','.','#','#','.','#'],
-        ['#','.','.','.','.','.','.',' ','.','.','.','.','.','.','#'],
-        ['#','.','#','#','.','#','#','#','#','#','.','#','#','.','#'],
-        ['#','o','.','.','.','.','.','#','.','.','.','.','.','o','#'],
-        ['#','#','#','#','#','#','#','#','#','#','#','#','#','#','#'],
-    ];
-    let mut current_map: MapGrid;
+
+    let mut current_level: u8 = 1;
+    let mut current_map: MapGrid = get_map(current_level);
+
+    // let map: MapGrid = [
+    //     ['#','#','#','#','#','#','#','#','#','#','#','#','#','#','#'],
+    //     ['#','o','.','.','.','.','.','#','.','.','.','.','.','o','#'],
+    //     ['#','.','#','#','.','#','.','#','.','#','.','#','#','.','#'],
+    //     ['#','.','.','.','.','#','.','.','.','#','.','.','.','.','#'],
+    //     ['#','.','#','#','.','#','#',' ','#','#','.','#','#','.','#'],
+    //     ['#','.','.','.','.','#',' ',' ',' ','#','.','.','.','.','#'],
+    //     ['#','.','#','#','.','#','#','#','#','#','.','#','#','.','#'],
+    //     ['#','.','.','.','.','.','.',' ','.','.','.','.','.','.','#'],
+    //     ['#','.','#','#','.','#','#','#','#','#','.','#','#','.','#'],
+    //     ['#','o','.','.','.','.','.','#','.','.','.','.','.','o','#'],
+    //     ['#','#','#','#','#','#','#','#','#','#','#','#','#','#','#'],
+    // ];
+
+    // let mut current_map: MapGrid;
 
     
     let mut win: bool = false;
@@ -76,10 +87,15 @@ fn main() {
     // input movement
     let mut input_key: char = 'd';
 
-    //this is creating map that dynamic, ex the pellet is eaten and gone
-    current_map = map;
-
     println!("RustyMan");
+
+    if main_menu() {
+        execute!(stdout(), LeaveAlternateScreen, Show).unwrap();
+        disable_raw_mode().unwrap();
+        return;
+    }
+
+    execute!(stdout(), Clear(ClearType::All)).unwrap();
     
     loop {
         execute!(stdout(), MoveTo(0, 0), Hide).unwrap();
@@ -144,7 +160,7 @@ fn main() {
         // ghost collision check
         pacman.check_ghost_collision(&mut ghost);
         // ghost movement 
-        if ghost.live{ghost.movement(&map);} 
+        if ghost.live{ghost.movement(&current_map);} 
         pacman.check_ghost_collision(&mut ghost);
 
         
@@ -192,13 +208,15 @@ fn main() {
 
 
 
-fn read_input() -> Option<char> {
+pub fn read_input() -> Option<char> {
     // its for handling input so fucking long
         if event::poll(Duration::from_millis(200)).unwrap() {
             if let Event::Key(key_event) = event::read().unwrap() {
                 if key_event.kind == KeyEventKind::Press {
-                    if let KeyCode::Char(c) = key_event.code {
-                        return Some(c);
+                    match key_event.code {
+                        KeyCode::Char(c) => return Some(c),
+                        KeyCode::Enter => return Some('\n'),
+                        _ => {}
                     }
                 }
             }
