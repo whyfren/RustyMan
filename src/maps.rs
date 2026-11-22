@@ -1,8 +1,8 @@
 // libraries
-use crossterm::style::Stylize;
+#[cfg(not(target_arch = "wasm32"))] use crossterm::style::Stylize;
 
-use crate::ghosts::Ghost;
-use crate::player::Player;
+#[cfg(not(target_arch = "wasm32"))] use crate::ghosts::Ghost;
+#[cfg(not(target_arch = "wasm32"))] use crate::player::Player;
 
 pub const MAP_HEIGHT: usize = 11;
 pub const MAP_WIDTH: usize = 15;
@@ -58,7 +58,7 @@ pub fn get_map(level: u8) ->  MapGrid {
     }
 }
 
-pub fn render_map(current_map: &mut MapGrid, player: &mut Player, ghost: &mut Ghost) {
+#[cfg(not(target_arch = "wasm32"))] pub fn render_map(current_map: &mut MapGrid, player: &mut Player, ghost: &mut Ghost) {
     
     for y in 0..MAP_HEIGHT {
 

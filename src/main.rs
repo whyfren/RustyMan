@@ -1,7 +1,7 @@
 // libraries
 use std::io::stdout;
 use std::time::Duration;
-use crossterm::{
+#[cfg(not(target_arch = "wasm32"))] use crossterm::{
     cursor::{Hide, MoveTo, Show}, 
     event::{self, Event, KeyCode, KeyEventKind}, 
     style::Stylize,
