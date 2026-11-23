@@ -13,7 +13,8 @@ pub fn main_menu() -> bool {
     let q: &str = "Exit";
     loop{
         execute!(stdout(), MoveTo(0, 0), Hide).unwrap();
-        
+        println!("===============================");
+        println!("           RUSTYMAN            ");
         println!("===============================");
         println!("Press Enter To {}", s.green().bold());
         println!("Press Q To {}", q.red().bold());

@@ -1,4 +1,3 @@
-# Rustyman
 
 ## About
 
