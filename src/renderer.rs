@@ -41,12 +41,28 @@ impl Frame {
         });
     }
 
+    pub fn pushln(&mut self, text: &str, color: Color, bold: bool) {
+        self.spans.push(StyledSpan {
+            text: format!("{}\n", text.to_string()),
+            color,
+            bold
+        });
+    }
+
+    pub fn pushformat(&mut self, text: String, color: Color, bold: bool) {
+        self.spans.push(StyledSpan {
+            text: text,
+            color,
+            bold
+        });
+    }
+
     pub fn new_line(&mut self) {
         self.push("\n", Color::Default, false);
     }
 }
 
-#[cfg(not(target_arch = "wasm32"))] pub fn terminal_render(frame: Frame) {
+#[cfg(not(target_arch = "wasm32"))] pub fn terminal_render(frame: &    Frame) {
     for span in &frame.spans {
         let mut c: String;
         let mut stylied: StyledContent<String>;
@@ -58,7 +74,7 @@ impl Frame {
             Color::Yellow => {stylied = c.yellow();}
             Color::Orange => {stylied = c.dark_yellow();}
             Color::Red => {stylied = c.red();}
-            Color::Rust => {stylied = c.dark_grey();}
+            Color::Rust => {stylied = c.dark_yellow();}
             Color::Blue => {stylied = c.blue();}
             Color::Cyan=> {stylied = c.cyan();}
             Color::Magenta => {stylied = c.magenta();}
@@ -70,7 +86,7 @@ impl Frame {
     }
 }
 
-#[cfg(target_arch = "wasm32")] pub fn web_render(frame: &Frame) {
+#[cfg(target_arch = "wasm32")] pub fn web_render(frame: &Frame) -> String {
     let mut out = String::new();
     for span in &frame.spans {
         let class_name = match span.color {
@@ -86,9 +102,10 @@ impl Frame {
             Color::Default => "Default",
         };
         if span.bold {
-            out.push_str(&format!("<span class=\"{} bold\">{} </span>", class_name, span.text));
+            out.push_str(&format!("<span class=\"{} bold\">{}</span>", class_name, span.text));
         } else {
-            out.push_str(&format!("<span class=\"{}\">{} </span>", class_name, span.text));
+            out.push_str(&format!("<span class=\"{}\">{}</span>", class_name, span.text));
         }
     }
+    out
 }

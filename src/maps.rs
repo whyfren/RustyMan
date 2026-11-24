@@ -1,9 +1,8 @@
 // libraries
-#[cfg(not(target_arch = "wasm32"))] use crate::ghosts::Ghost;
-#[cfg(not(target_arch = "wasm32"))] use crate::player::Player;
-#[cfg(not(target_arch = "wasm32"))]
 
 use crate::renderer::{Frame, Color};
+use crate::player::Player;
+use crate::ghosts::Ghost;
 
 pub const MAP_HEIGHT: usize = 11;
 pub const MAP_WIDTH: usize = 15;
@@ -59,7 +58,7 @@ pub fn get_map(level: u8) ->  MapGrid {
     }
 }
 
-pub fn render_map(current_map: &mut MapGrid, player: &mut Player, ghost: &mut Ghost) -> Frame {
+pub fn render_map(current_map: & MapGrid, player: & Player, ghost: & Ghost) -> Frame {
     let mut frame = Frame::new();
     for y in 0..MAP_HEIGHT {
 
@@ -72,9 +71,7 @@ pub fn render_map(current_map: &mut MapGrid, player: &mut Player, ghost: &mut Gh
             if player.pos_x == x && player.pos_y == y {
 
                 frame.push("R ", Color::Rust, true);
-
-                player.check_power_pellet(current_map);
-                current_map[y][x] = ' ';
+                
 
 
             } else if ghost.pos_x == x && ghost.pos_y == y && ghost.live && in_light{

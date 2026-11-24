@@ -1,10 +1,20 @@
 
+use crate::game::GameState::TheEnd;
 use crate::ghosts::Ghost;
-use crate::maps::{get_map, is_win, MapGrid, MAP_HEIGHT, MAP_WIDTH, MAX_LEVEL};
+use crate::maps::{get_map, is_win, render_map, MapGrid, MAP_HEIGHT, MAP_WIDTH, MAX_LEVEL};
 use crate::player::Player;
+use crate::renderer::{
+    Frame
+};
+use crate::ui::{
+    main_menu,
+    level_continue,
+    end,
+    winning
+};
 
-#[derive(PartialEq)]
-enum GameState {
+#[derive(PartialEq, Clone, Copy)]
+pub enum GameState {
     MainMenu,
     Playing,
     LevelWin,
@@ -19,7 +29,8 @@ pub struct Game {
     current_level: u8,
     total_score: i32,
     last_move: char,
-    state: GameState,
+    pub state: GameState,
+    pub should_quit: bool,
 }
 
 impl Game {
@@ -62,16 +73,20 @@ impl Game {
         total_score: 0,
         last_move: ' ',
         state: GameState::MainMenu,
+        should_quit: false,
     }
     }
 
 
 
     pub fn handle_input(&mut self, key: &str) {
+        
         match self.state {
             GameState::MainMenu => {
                 if key == "Enter"{
                     self.state = GameState::Playing;
+                } if key == "q"{
+                    self.should_quit = true;
                 } else {
 
                 }
@@ -184,109 +199,26 @@ impl Game {
 
     }
 
-
-
-
-
-    pub fn render_html(&self) -> String {
-        let mut out = String::new();
-        
+    pub fn render(&self) -> Frame {
+        let mut frame = Frame::new();
         match self.state {
             GameState::MainMenu => {
-                out.push_str("===============================\n");
-                out.push_str("            RUSTYMAN           \n");
-                out.push_str("      Press Enter To Start!    \n");
-                out.push_str("===============================\n");
+                frame = main_menu();
             }
             GameState::Playing => {
-                out.push_str("=============================\n");
-                out.push_str(&format!("Level : {}\n", self.current_level));
-                out.push_str("=============================\n");
-                for y in 0..MAP_HEIGHT {
-                    for x in 0..MAP_WIDTH {
-                        let dx = x.abs_diff(self.pacman.pos_x);
-                        let dy = y.abs_diff(self.pacman.pos_y);
-
-                        let in_light = dx * dx + dy * dy <= 10 || self.pacman.is_power_mode;
-
-
-
-                        if self.pacman.pos_x == x && self.pacman.pos_y == y {
-                            out.push_str(&format!("<span class=\"pacman\">{} </span>", self.pacman.icon));
-                        
-
-
-
-                        } else if self.ghost.pos_x == x && self.ghost.pos_y == y && self.ghost.live && in_light{
-                        
-                            if self.pacman.is_power_mode {
-                                out.push_str(&format!("<span class=\"scared\">{} </span>", self.ghost.icon));
-                            } else {
-                                out.push_str(&format!("<span class=\"ghost\">{} </span>", self.ghost.icon));
-                            }
-
-                        } else {
-                            if in_light{
-                                match self.current_map[y][x]{
-                                    '#' => out.push_str("<span class=\"wall\"># </span>"),
-                                    '.' => out.push_str("<span class=\"dot\">. </span>"),
-                                    'o' => out.push_str("<span class=\"pellet\">o </span>"),
-                                    _ => out.push_str("  ")
-                                }
-                            } else {
-                                out.push_str("  ");
-                            }
-
-                        }
-                    }
-                    out.push('\n');
-                    
-                }
-                out.push_str("=============================\n");
-                out.push_str(&format!("score : {} lives : {}", self.pacman.score, self.pacman.lives));
-                out.push_str("\n");
-                out.push_str(&format!("power mode : {}", self.pacman.is_power_mode));
-                out.push_str("\n");
-                out.push_str("=============================\n");
-
-                
-                let dist: usize = self.ghost.pos_x.abs_diff(self.pacman.pos_x) + self.ghost.pos_y.abs_diff(self.pacman.pos_y);
-                out.push_str("Ghost Detector: \n");
-                if dist <= 4 && self.ghost.live {
-                    out.push_str("<span class=\"ghost\">WARNING GHOST CLOSE DETECTED</span>")
-                } else if dist <= 6 && self.ghost.live {
-                    out.push_str("<span class=\"pacman\">WARNING GHOST GETTING CLOSE </span>")
-                } else {
-                    out.push_str("<span class=\"safe\">OK                           </span>")
-                }
-                out.push_str("\n");
-                out.push_str("=============================\n");
-
-
-
-
+                frame = render_map(& self.current_map, & self.pacman, & self.ghost)
             }
             GameState::GameOver => {
-                out.push_str("===============================\n");
-                out.push_str("            GAMEOVER           \n");
-                out.push_str("    Press Enter To Continue!   \n");
-                out.push_str("===============================\n");
+                frame = winning(false, &self.pacman, self.total_score)
             }
             GameState::LevelWin => {
-                out.push_str("===============================\n");
-                out.push_str(&format!("       Level {} Completed          \n", self.current_level));
-                out.push_str("    Press Enter To Continue!   \n");
-                out.push_str("===============================\n");
+                frame = level_continue(& self.current_level);
             }
             GameState::TheEnd => {
-                out.push_str("===============================\n");
-                out.push_str("   you somehow beat the game.  \n");
-                out.push_str("      im proud of you son      \n");
-                out.push_str("===============================\n");
+                frame = end(&self.pacman, self.total_score)
             }
         }
 
-
-        out 
+        frame
     }
 }

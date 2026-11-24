@@ -16,12 +16,14 @@ body {
 }
 
 
+.bold {font-weight: bold;}
 
-
-.pacman { color: #facc15; font-weight: bold; }
-.safe   { color: green;   font-weight: bold;}
-.ghost  { color: #ef4444; font-weight: bold; }
-.scared { color: #22d3ee; font-weight: bold; }
-.wall   { color: #3b82f6; font-weight: bold; }
-.dot    { color: #e5e7eb; }
-.pellet { color: #e879f9; font-weight: bold; }
+.Yellow { color: #facc15;}
+.Rust { color: palevioletred}
+.Green   { color: green;  }
+.Red  { color: #ef4444;}
+.Cyan { color: #22d3ee;}
+.Blue   { color: #3b82f6;}
+.White    { color: #e5e7eb;}
+.Magenta { color: #e879f9;}
+.Default { color: whitesmoke}
