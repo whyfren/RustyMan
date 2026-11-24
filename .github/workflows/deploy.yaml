@@ -1,0 +1,62 @@
+name: CI / CD RustyMan to Github Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Install Rust & WASM Target
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: CI check
+        run: cargo check
+
+      - name: Install WASM
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+      - name: build WASM
+        run: wasm-pack build --target web
+
+      - name: Prepare dist folder for github pages
+        run: |
+          mkdir -p dist
+          cp index.html style.css dist/
+          cp -r  pkg dist/
+          rm -f dist/pkg/.gitignore
+
+      - name: setup pages
+        uses: actions/configure-pages@v5
+
+      - name: upload pages artifac
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to github pages
+        id: deployment
+        uses: actions/deploy-pages@v4

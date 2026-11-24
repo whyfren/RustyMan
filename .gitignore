@@ -4,6 +4,8 @@ TO-DO.md
 # Rust / Cargo build artifacts
 /target
 
+/pkg
+
 # IDE / Visual Studio cache
 .vs/
 
