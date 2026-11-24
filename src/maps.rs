@@ -1,8 +1,9 @@
 // libraries
-#[cfg(not(target_arch = "wasm32"))] use crossterm::style::Stylize;
-
 #[cfg(not(target_arch = "wasm32"))] use crate::ghosts::Ghost;
 #[cfg(not(target_arch = "wasm32"))] use crate::player::Player;
+#[cfg(not(target_arch = "wasm32"))]
+
+use crate::renderer::{Frame, Color};
 
 pub const MAP_HEIGHT: usize = 11;
 pub const MAP_WIDTH: usize = 15;
@@ -58,8 +59,8 @@ pub fn get_map(level: u8) ->  MapGrid {
     }
 }
 
-#[cfg(not(target_arch = "wasm32"))] pub fn render_map(current_map: &mut MapGrid, player: &mut Player, ghost: &mut Ghost) {
-    
+pub fn render_map(current_map: &mut MapGrid, player: &mut Player, ghost: &mut Ghost) -> Frame {
+    let mut frame = Frame::new();
     for y in 0..MAP_HEIGHT {
 
         for x in 0..MAP_WIDTH{ 
@@ -70,7 +71,8 @@ pub fn get_map(level: u8) ->  MapGrid {
 
             if player.pos_x == x && player.pos_y == y {
 
-                print!("{} ", player.icon.yellow().bold());
+                frame.push("R ", Color::Rust, true);
+
                 player.check_power_pellet(current_map);
                 current_map[y][x] = ' ';
 
@@ -78,9 +80,9 @@ pub fn get_map(level: u8) ->  MapGrid {
             } else if ghost.pos_x == x && ghost.pos_y == y && ghost.live && in_light{
             
                 if player.is_power_mode {
-                    print!("{} ", ghost.icon.cyan().bold());
+                    frame.push("G ", Color::Cyan, true);
                 } else {
-                    print!("{} ", ghost.icon.red().bold());
+                    frame.push("G ", Color::Red, true);
                 }
 
             } else {
@@ -88,20 +90,21 @@ pub fn get_map(level: u8) ->  MapGrid {
 
                 if in_light{
                     match current_map[y][x]{
-                        '#' => print!("{} ", current_map[y][x].blue().bold()),
-                        '.' => print!("{} ", current_map[y][x].white()),
-                        'o' => print!("{} ", current_map[y][x].magenta().bold()),
-                        _ => print!("  ")
+                        '#' => frame.push("# ", Color::Blue, true),
+                        '.' => frame.push(". ", Color::White, true),
+                        'o' => frame.push("o ", Color::Magenta, true),
+                        _ => frame.push("  ", Color::Default, false)
                     }
                 } else {
-                    print!("  ");
+                    frame.push("  ", Color::Default, false);
                 }
 
             }
 
         }
-    println!("");
+    frame.new_line();
     }
+    frame
 }
 
 

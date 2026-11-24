@@ -14,8 +14,13 @@ mod ghosts;
 mod maps;
 mod player;
 mod ui;
+mod renderer;
+mod game;
 
 use ghosts::Ghost;
+use renderer::{
+    terminal_render
+};
 use maps::{
     MapGrid,
     MAX_LEVEL,
@@ -105,7 +110,7 @@ fn main() {
         println!("===============================");
 
         // render map
-        render_map(&mut current_map, &mut pacman, &mut ghost);
+        terminal_render(render_map(&mut current_map, &mut pacman, &mut ghost));
         // render map/
         
         // stats
