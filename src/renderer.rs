@@ -57,6 +57,10 @@ impl Frame {
         });
     }
 
+    pub fn append(&mut self, other: Frame) {
+        self.spans.extend(other.spans);
+    }
+
     pub fn new_line(&mut self) {
         self.push("\n", Color::Default, false);
     }

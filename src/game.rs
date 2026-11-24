@@ -7,10 +7,7 @@ use crate::renderer::{
     Frame
 };
 use crate::ui::{
-    main_menu,
-    level_continue,
-    end,
-    winning
+    end, ghost_detector, header, level_continue, main_menu, stats, winning
 };
 
 #[derive(PartialEq, Clone, Copy)]
@@ -202,21 +199,20 @@ impl Game {
     pub fn render(&self) -> Frame {
         let mut frame = Frame::new();
         match self.state {
-            GameState::MainMenu => {
-                frame = main_menu();
-            }
+            GameState::MainMenu => frame = main_menu(),
+            
             GameState::Playing => {
-                frame = render_map(& self.current_map, & self.pacman, & self.ghost)
-            }
-            GameState::GameOver => {
-                frame = winning(false, &self.pacman, self.total_score)
-            }
-            GameState::LevelWin => {
-                frame = level_continue(& self.current_level);
-            }
-            GameState::TheEnd => {
-                frame = end(&self.pacman, self.total_score)
-            }
+                frame.append(header(&self.current_level));
+                frame.append(render_map(& self.current_map, & self.pacman, & self.ghost));
+                frame.append(stats(&self.pacman));
+                frame.append(ghost_detector(&self.pacman, &self.ghost));
+            },
+            GameState::GameOver => frame = winning(false, &self.pacman, self.total_score),
+            
+            GameState::LevelWin => frame = level_continue(& self.current_level),
+            
+            GameState::TheEnd => frame = end(&self.pacman, self.total_score)
+            
         }
 
         frame
