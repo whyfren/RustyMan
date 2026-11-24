@@ -16,24 +16,8 @@ mod ui;
 mod renderer;
 mod game;
 
-use ghosts::Ghost;
 use renderer::{
     terminal_render
-};
-use maps::{
-    MapGrid,
-    MAX_LEVEL,
-    render_map,
-    is_win,
-    get_map
-};
-use player::{
-    Player
-};
-use ui::{
-    main_menu,
-    winning,
-    level_continue
 };
 use game::{
     Game,

@@ -1,7 +1,5 @@
-
-use crate::game::GameState::TheEnd;
 use crate::ghosts::Ghost;
-use crate::maps::{get_map, is_win, render_map, MapGrid, MAP_HEIGHT, MAP_WIDTH, MAX_LEVEL};
+use crate::maps::{get_map, is_win, render_map, MapGrid, MAX_LEVEL};
 use crate::player::Player;
 use crate::renderer::{
     Frame
@@ -32,7 +30,7 @@ pub struct Game {
 
 impl Game {
     pub fn new() -> Game {
-        let mut pacman = Player{
+        let pacman = Player{
         icon: 'C',
         pos_x: 7,
         pos_y: 7,
@@ -44,23 +42,15 @@ impl Game {
     };
 
     // ghost declaration
-    let mut ghost: Ghost = Ghost{
+    let ghost: Ghost = Ghost{
         icon: 'G',
         pos_x: 7,
         pos_y: 5,
         live: true
     };
-    let mut total_score: i32 = 0;
-
-    let mut current_level: u8 = 1;
-    let mut current_map: MapGrid = get_map(current_level);
-
-    let mut win: bool = false;
-    let mut game_stop: bool = false;
-
-    let mut last_move: char= ' ';
-
-    let mut warning_massage: &str;
+    
+    let current_level: u8 = 1;
+    let current_map: MapGrid = get_map(current_level);
 
     return Game {
         pacman,

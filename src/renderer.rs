@@ -68,7 +68,7 @@ impl Frame {
 
 #[cfg(not(target_arch = "wasm32"))] pub fn terminal_render(frame: &    Frame) {
     for span in &frame.spans {
-        let mut c: String;
+        let c: String;
         let mut stylied: StyledContent<String>;
         c = span.text.to_string();
         
