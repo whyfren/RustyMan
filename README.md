@@ -82,12 +82,7 @@ feel free to check it out!
 |S|Down|
 |D|Right|
 |Q|Quit|
-|Enter|select|
-
-W, A, S, D For Movement
-Enter For Continue/Start
-
-Q for quit if you on terminal
+|Enter|select|`
 
 ## Roadmap
 
