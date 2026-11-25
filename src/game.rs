@@ -1,4 +1,5 @@
-use crate::ghosts::Ghost;
+use crate::ghosts::GhostType::{Chaser, Patrol};
+use crate::ghosts::{Direction, Ghost};
 use crate::maps::{get_map, is_win, render_map, MapGrid, MAX_LEVEL};
 use crate::player::Player;
 use crate::renderer::{
@@ -46,7 +47,10 @@ impl Game {
         icon: 'G',
         pos_x: 7,
         pos_y: 5,
-        live: true
+        live: true,
+        last_dir: Direction::Up,
+        ghost_type: Chaser,
+        respawn_timer: 0,
     };
     
     let current_level: u8 = 1;
@@ -151,8 +155,18 @@ impl Game {
 
         // checking ghost collision
         self.pacman.check_ghost_collision(&mut self.ghost);
+
         // ghost movement 
-        if self.ghost.live{self.ghost.movement(&self.current_map);} 
+        if self.ghost.live {
+            self.ghost.movement(&self.current_map, &mut self.pacman);
+        } else if self.ghost.respawn_timer > 0 {
+            self.ghost.respawn_timer -= 1;
+        } else {
+            self.ghost.pos_x = 7;
+            self.ghost.pos_y = 5;
+            self.ghost.live = true;
+        }
+
         // checking ghost collision (again)
         self.pacman.check_ghost_collision(&mut self.ghost);
 
