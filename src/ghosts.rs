@@ -21,7 +21,7 @@ pub enum GhostType {
 
 
 pub struct Ghost{
-    pub icon: char,
+    // pub icon: char,
     pub pos_x: usize,
     pub pos_y: usize,
     pub live: bool,

@@ -2,7 +2,7 @@ use crate::maps::MapGrid;
 use crate::ghosts::Ghost;
 
 pub struct Player{
-    pub icon: char,
+    // pub icon: char,
     pub pos_x: usize,
     pub pos_y: usize,
     pub lives: u8,

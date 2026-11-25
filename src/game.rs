@@ -1,4 +1,4 @@
-use crate::ghosts::GhostType::{Chaser, Patrol};
+use crate::ghosts::GhostType::Chaser;
 use crate::ghosts::{Direction, Ghost};
 use crate::maps::{get_map, is_win, render_map, MapGrid, MAX_LEVEL};
 use crate::player::Player;
@@ -32,7 +32,7 @@ pub struct Game {
 impl Game {
     pub fn new() -> Game {
         let pacman = Player{
-        icon: 'C',
+        // icon: 'C',
         pos_x: 7,
         pos_y: 7,
         lives: 3,
@@ -44,7 +44,7 @@ impl Game {
 
     // ghost declaration
     let ghost: Ghost = Ghost{
-        icon: 'G',
+        // icon: 'G',
         pos_x: 7,
         pos_y: 5,
         live: true,
