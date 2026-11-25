@@ -1,12 +1,13 @@
 # RustyMan
 ![Rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)
 ![WebAssembly](https://img.shields.io/badge/WebAssembly-654FF0?style=for-the-badge&logo=webassembly&logoColor=white)
+![Crates.io](https://img.shields.io/crates/v/rustyman-game?style=for-the-badge&logo=rust)
 
 ---
 ## About
 it is a terminal based game and inspired by pacman.
 
-you are the player (which is a `'C'` char) collecting dots accros the map.
+you are the player (which is a `'R'` char) collecting dots accros the map.
 
 you have *limited view,* so be carefull of the ghost `'G'`, boo!
 
@@ -43,16 +44,15 @@ and the WASM, its hard, like suddenly my love rust complier cant tell me whats t
 but i think its worth, i learn alot about low level programming, ts is tuff.
 
 ## Installation
-### Run it in Terminal
+### Terminal Version (Recommended)
 Open your desired Terminal.
 ```bash
-git clone https://github.com/whyfren/RustyMan.git
-cd RustyMan
-cargo run
+cargo install rustyman-game
+rustyman
 ```
 
 ---
-### Run it in Website
+### Website Version
 Open your desired Terminal.
 ```bash
 git clone https://github.com/whyfren/RustyMan.git
