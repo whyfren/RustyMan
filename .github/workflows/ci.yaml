@@ -1,0 +1,25 @@
+name: CI Check
+
+on:
+  pull_request: 
+    branches: ["main"]
+  push:
+    branches: ["develop"]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Install Rust & WASM Target
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: Dextop CI check
+        run: cargo check
+
+      - name: WASM CI Check
+        run: cargo check --lib --target wasm32-unknown-unknown
