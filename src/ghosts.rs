@@ -56,14 +56,10 @@ impl Ghost {
             Direction::Left
         ];
 
-        let mut valid_moves: Vec<(Direction, usize, usize)> = Vec::new();
-
         let mut candidate_moves: Vec<(Direction, usize, usize, usize)> = Vec::new();
 
         
         let chosen_move: Option<&(Direction, usize, usize, usize)>;
-
-        let opp = self.last_dir.opposite();
 
         for dir in all_dirs {
             let mut next_x = self.pos_x;
@@ -76,7 +72,7 @@ impl Ghost {
                 Direction::Right => {next_x += 1}
             }
 
-            if map[next_y][next_x] != '#' && dir != opp {
+            if map[next_y][next_x] != '#'{
                 let dist = next_x.abs_diff(player.pos_x) + next_y.abs_diff(player.pos_y);
                 candidate_moves.push((dir, next_x, next_y, dist));
             }

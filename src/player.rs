@@ -75,7 +75,7 @@ impl Player {
         if ghost.live && ghost.pos_x == self.pos_x && ghost.pos_y == self.pos_y{
             if self.is_power_mode {
                         ghost.live = false;
-                        ghost.respawn_timer = 1;
+                        ghost.respawn_timer = 50;
                         self.score += 200;
                     } else {
                         self.lives -= 1;
