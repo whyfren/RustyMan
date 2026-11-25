@@ -1,5 +1,5 @@
 [package]
-name = "RustyMan"
+name = "RustyMan-game"
 version = "0.1.0"
 edition = "2024"
 description = "A horor-twist terminal pacman-like game, with limitid view. be carefull of ghost, boo!"
