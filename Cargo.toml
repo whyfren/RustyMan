@@ -1,14 +1,18 @@
 [package]
-name = "RustyMan-game"
+name = "rustyman-game"
 version = "0.1.0"
 edition = "2024"
-description = "A horor-twist terminal pacman-like game, with limitid view. be carefull of ghost, boo!"
+description = "A horror-twist terminal pacman-like game, with limited view. be careful of ghost, boo!"
 license = "MIT"
 repository = "https://github.com/whyfren/RustyMan"
 homepage = "https://whyfren.github.io/RustyMan"
 readme = "README.md"
 keywords = ["game", "pacman", "terminal", "tui", "horror"]
 categories = ["games", "command-line-utilities"]
+
+[[bin]]
+name = "rustyman"
+path = "src/main.rs"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
