@@ -82,7 +82,7 @@ feel free to check it out!
 |S|Down|
 |D|Right|
 |Q|Quit|
-|Enter|select|`
+|Enter|select|
 
 ## Roadmap
 
